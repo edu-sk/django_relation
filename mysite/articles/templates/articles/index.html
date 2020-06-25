@@ -12,6 +12,30 @@
  <p>{{ article.pk }}번째 글</p>
  <p>{{ article.title }}</p>
  <p>댓글 개수 : {{ article.comment_set.all|length }}</p>
+ <p>좋아요 : {{ article.like_users.count }}</p>
+ <p>추천수 : {{ article.recommend_users.count }}</p>
+
+ {% if user in article.like_users.all %}
+   <a href="{% url 'articles:like' article.pk %}">
+     좋아요 취소
+  </a>
+ {% else %}
+  <a href="{% url 'articles:like' article.pk %}">
+    좋아요
+  </a>
+  {% endif %}
+  <br>
+  {% if user in article.recommend_users.all %}
+   <a href="{% url 'articles:recommend' article.pk %}">
+     추천 취소
+    </a>
+
+  {% else %}
+    <a href="{% url 'articles:recommend' article.pk %}">
+      추천
+    </a>
+  {% endif %}
+ 
  <a href="{% url 'articles:detail' article.pk %}">[DETAIL]</a>
  <hr>
 {% endfor %}

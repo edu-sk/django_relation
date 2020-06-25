@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'modelrelation',
     'articles',
     'accounts',
     'django_extensions',
