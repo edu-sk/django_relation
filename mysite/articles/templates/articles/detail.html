@@ -13,9 +13,9 @@
   <img src="{{ article.image_thumbnail.url }}" alt="{{ article.image }}"> 
 {% endif %}
 
+{% include 'articles/_like.html' %}
 
 <hr>
-<p>{{ comments|length }}개의 댓글</p>
 <ul>
   {% for comment in comments %}
     <li>

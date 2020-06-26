@@ -1,42 +1,35 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block body %}
-<h1>메인 페이지 입니다.</h1>
-<hr>
-{% if user.is_authenticated %}
-  <a href="{% url 'articles:create' %}">[CREATE]</a>
-{% else %}
-  <a href="{% url 'accounts:login' %}">[글을 작성하시려면 로그인을 해 주세요.]</a>
-{% endif %}
-<hr>
-{% for article in articles %}
- <p>{{ article.pk }}번째 글</p>
- <p>{{ article.title }}</p>
- <p>댓글 개수 : {{ article.comment_set.all|length }}</p>
- <p>좋아요 : {{ article.like_users.count }}</p>
- <p>추천수 : {{ article.recommend_users.count }}</p>
+<div class="row justify-content-center">
+  {% for article in articles %}
+    <div class="card col-3 m-3" style="width: 18rem;">
+      <!-- Card Image -->
+      {% if article.image %}
+        <img src="{{ article.image_thumbnail.url }}" class="card-img-top" alt="{{ article.image }}" style="height: 10rem;">
+      {% else %}
+        <img src="{% static 'articles/images/noimage.jpeg' %}" class="card-img-top" alt="이미지 없음">
+      {% endif %}
+      
+      <!-- Card Body -->
+      <div class="card-body">
+        <!-- Card Title -->
+        <a href="{% url 'articles:detail' article.pk %}"><h5 class="card-title btn-outline-light text-dark">{{ article.title }}</h5></a>
+        <hr>
+        <!-- Article User -->
+        <p>작성자 : {{ article.user.username }}</p>
 
- {% if user in article.like_users.all %}
-   <a href="{% url 'articles:like' article.pk %}">
-     좋아요 취소
-  </a>
- {% else %}
-  <a href="{% url 'articles:like' article.pk %}">
-    좋아요
-  </a>
-  {% endif %}
-  <br>
-  {% if user in article.recommend_users.all %}
-   <a href="{% url 'articles:recommend' article.pk %}">
-     추천 취소
-    </a>
+        {% include 'articles/_like.html' %}
 
-  {% else %}
-    <a href="{% url 'articles:recommend' article.pk %}">
-      추천
+      </div>
+    </div>
+  {% endfor %}
+  
+</div>
+<hr>
+  {% for num in articles.paginator.page_range %}
+    <a href="{% url 'articles:index' %}?page={{ num }}">
+      {{ num }}
     </a>
-  {% endif %}
- 
- <a href="{% url 'articles:detail' article.pk %}">[DETAIL]</a>
- <hr>
-{% endfor %}
+  {% endfor %}
 {% endblock %}

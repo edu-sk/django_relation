@@ -1,22 +1,23 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm
+from django.contrib.auth import get_user_model
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth import update_session_auth_hash
-from .forms import CustomUserChangeForm
+from .forms import CustomUserChangeForm, CustomUserCreationForm
 
 # Create your views here.
 def signup(request):
     if request.user.is_authenticated:
         return redirect('articles:index')
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             auth_login(request, user)
             return redirect('articles:index')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     context = {
         'form': form
     }
@@ -81,3 +82,21 @@ def change_password(request):
         'form': form
     }
     return render(request, 'accounts/change_password.html', context)
+
+def profile(request, username):
+    person = get_object_or_404(get_user_model(), username=username)
+    context = {
+        'person': person
+    }
+    return render(request, 'accounts/profile.html', context)
+
+def follow(request, user_pk):
+    # person에 담긴 user_pk값을 가진 유저는
+    # 프로필의 주인이다.
+    # reqeust.user는 나. 요청을 보내온 사용자이다.
+    person = get_object_or_404(get_user_model(), pk=user_pk)
+    if request.user in person.followers.all():
+        person.followers.remove(request.user)
+    else:
+        person.followers.add(request.user)
+    return redirect('accounts:profile', person.username )
