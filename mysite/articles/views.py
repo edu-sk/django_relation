@@ -1,12 +1,15 @@
-from django.shortcuts import render, redirect, get_object_or_404
+
 # DVDH
 # django가 주는 views에서 쓸 decorators http를 위한
-from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
 from .models import Article, Comment
 from .forms import ArticleForm, CommentForm
-from django.core.paginator import Paginator
+
 
 # Create your views here.
 def index(request):
@@ -117,16 +120,19 @@ def comment_delete(request, article_pk, comment_pk):
 
 @login_required
 def like(request, article_pk):
-    # 특정 게시물에 대한 정보
     article = get_object_or_404(Article, pk=article_pk)
-    # 좋아요를 누른 유저에 대한 정보
     user = request.user
-    # 사용자가 게시글의 좋아요 목록에 있으면
     if user in article.like_users.all():
         article.like_users.remove(user)
+        liked = False
     else:
         article.like_users.add(user)
-    return redirect('articles:index')
+        liked = True
+    context = {
+        'liked': liked,
+        'count': article.like_users.count()
+    }
+    return JsonResponse(context)
 
 @login_required
 def recommend(request, article_pk):

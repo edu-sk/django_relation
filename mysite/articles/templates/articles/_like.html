@@ -2,13 +2,10 @@
   <span class="mr-3"><i class="far fa-comment"></i> : {{ article.comment_set.all|length }}</span>
   <!-- Like -->
   {% if user in article.like_users.all %}
-    <a href="{% url 'articles:like' article.pk %}">
-      <i class="fas fa-heart fa-lg text-danger"></i>
-    </a>
+    <i class="fas fa-heart fa-lg like-button" data-id="{{ article.pk }}" style="color: crimson;"></i>
   {% else %}
-    <a href="{% url 'articles:like' article.pk %}">
-      <i class="far fa-heart fa-lg text-danger"></i>
-    </a>
+    <i class="far fa-heart fa-lg like-button" data-id="{{ article.pk }}" style="color: black;"></i>
   {% endif %}
-  <span> : {{ article.like_users.count }}</span>
+  <span id="like-count-{{ article.pk }}">{{ article.like_users.count }}</span>
 </p>
+
