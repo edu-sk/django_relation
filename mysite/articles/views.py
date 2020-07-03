@@ -13,6 +13,8 @@ from .forms import ArticleForm, CommentForm
 
 # Create your views here.
 def index(request):
+    test = Article.objects.filter(created_at__month='06')
+    print(dir(test))
     articles = Article.objects.all()
     # 1. Paginator(전체 리스트, 한 페이지당 갯수)
     paginator = Paginator(articles, 3)
